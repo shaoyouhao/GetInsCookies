@@ -2,13 +2,14 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from browser import Browser
+from setting import has_screen
 
 
 class InsCookiesDownloader:
     URL = "https://www.instagram.com"
 
     def __init__(self):
-        self.browser = Browser(has_screen=False)
+        self.browser = Browser(has_screen=has_screen)
         self.login_url = "https://www.instagram.com/accounts/login/"
 
     def login(self, account):
