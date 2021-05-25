@@ -15,10 +15,10 @@ from datetime import datetime
 from setting import has_screen
 
 
-
 def randmized_sleep(average=1):
     _min, _max = average * 1 / 2, average * 3 / 2
     sleep(random.uniform(_min, _max))
+
 
 class Browser:
     def __init__(self, has_screen=has_screen):
@@ -29,7 +29,7 @@ class Browser:
             chrome_options.add_argument("--headless")
         chrome_options.add_argument("--start-maximized")
         chrome_options.add_argument("--no-sandbox")
-        chrome_options.add_experimental_option('excludeSwitches', ['enable-automation']) # 假装不是模拟浏览器
+        chrome_options.add_experimental_option('excludeSwitches', ['enable-automation'])  # 假装不是模拟浏览器
         chrome_options.add_argument('blink-settings=imagesEnabled=false')  # 不加载图片, 提升速度
 
         self.driver = webdriver.Chrome(
@@ -97,7 +97,7 @@ class Browser:
         self.driver.execute_script("arguments[0].click();", elem)
 
     def open_new_tab(self, url):
-        self.driver.execute_script("window.open('%s');" %url)
+        self.driver.execute_script("window.open('%s');" % url)
         self.driver.switch_to.window(self.driver.window_handles[1])
 
     def close_current_tab(self):
@@ -111,17 +111,23 @@ class Browser:
         except Exception:
             pass
 
-    def save_cookies(self, username, status):
+    def save_cookies_to_mongodb(self, username, status):
         dictCookies = self.driver.get_cookies()
         cookie = ""
         for coo in dictCookies:
             cookie += coo['name'] + "=" + coo['value'] + ";"
         _remote_db["InsCookiePools"].update_one({"_id": username},
-                              {"$set": {"cookies": cookie, "update_time": datetime.now(), "status": status}}, upsert=True)
-
+                                                {"$set": {"cookies": cookie, "update_time": datetime.now(),
+                                                          "status": status}}, upsert=True)
 
     def load_cookies(self):
         cookies = json.loads(_remote_db['cookiePools'].find_one({"_id": "instagram"})['cookies'])
         for cookie in cookies:
             self.driver.add_cookie(cookie)
 
+    def get_cookies_str(self):
+        dictCookies = self.driver.get_cookies()
+        cookie = ""
+        for coo in dictCookies:
+            cookie += coo['name'] + "=" + coo['value'] + ";"
+        return cookie
