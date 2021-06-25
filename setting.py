@@ -4,6 +4,7 @@ import os
 has_screen = False
 
 # mongoDB数据库的连接
+ISMONGO = False
 URI = os.environ.get("REMOTE_DB", "")
 
 # mysql数据连接

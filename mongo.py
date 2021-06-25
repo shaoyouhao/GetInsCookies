@@ -3,12 +3,14 @@ import pymongo.errors
 import os
 import time
 import functools
-from setting import URI
+from setting import *
 
 
 # uri = settings.mongodb_uri
 db_name = URI.split('/')[-1]
-_remote_db = pymongo.MongoClient(URI, serverSelectionTimeoutMS=10 * 1000,
+_remote_db = ""
+if ISMONGO:
+    _remote_db = pymongo.MongoClient(URI, serverSelectionTimeoutMS=10 * 1000,
                                  socketTimeoutMS=15 * 1000,
                                  waitQueueTimeoutMS=15 * 1000)[db_name]
 
@@ -84,5 +86,5 @@ class ReadWriteDB(object):
     def is_collection(self, name):
         return name not in dir(self.w_db)
 
-
-remote_db = ReadWriteDB(_remote_db, _remote_db)
+if ISMONGO:
+    remote_db = ReadWriteDB(_remote_db, _remote_db)
